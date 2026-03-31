@@ -198,8 +198,9 @@ export async function gptTranslateJson(options: GptTranslateJsonOptions) {
             const content = response.choices[0].message?.content;
 
             if (content) {
-              const jsonContent = JSON.parse(content);
-              //const jsonContent = content.result;
+              // Strip markdown code fences if present (e.g. Gemini wraps responses in ```json ... ```)
+              const cleanContent = content.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+              const jsonContent = JSON.parse(cleanContent);
               translatedTexts = [...translatedTexts, ...jsonContent];
             }
 
